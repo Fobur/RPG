@@ -10,9 +10,10 @@ namespace RPG
     {
         public readonly int XCord;
         public readonly int YCord;
-        GameObject Content;
+        public GameObject Content;
+        public readonly int Size = 30;
 
-        Tile(int x, int y, GameObject obj)
+        public Tile(int x, int y, GameObject obj)
         {
             XCord = x;
             YCord = y;

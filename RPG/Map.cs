@@ -9,17 +9,22 @@ namespace RPG
     public class Map
     {
         public readonly int Size;
-        public Tile[][] Grid;
+        public Tile[] Grid;
 
-        Map(int size)
+        public Map(int size)
         {
             Size = size;
             Grid = GenerateMap(size);
         }
 
-        private Tile[][] GenerateMap(int size)
+        private Tile[] GenerateMap(int size)
         {
-            return new Tile[size][];
+            var ret = new Tile[size];
+            for (var i = 0; i < size; i++)
+            {
+                ret[i] = new Tile(i, i, new GameObject());
+            }
+            return ret;
         }
     }
 }
