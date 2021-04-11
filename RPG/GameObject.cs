@@ -1,6 +1,10 @@
-﻿namespace RPG
+﻿using System.Drawing;
+
+namespace RPG
 {
-    internal class GameObject
+    public class GameObject
     {
+        public Image Image = Properties.Resources.grass;
+        public string Difficulty;
     }
 }
