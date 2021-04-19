@@ -5,6 +5,13 @@ namespace RPG
     public class GameObject
     {
         public Image Image = Properties.Resources.grass;
-        public string Difficulty;
+        public int Difficulty;
+    }
+
+    enum TileName
+    {
+        Mountain,
+        River,
+        Hub
     }
 }
