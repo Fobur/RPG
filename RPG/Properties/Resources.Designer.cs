@@ -83,6 +83,7 @@ namespace RPG.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+
         internal static System.Drawing.Bitmap hub {
             get {
                 object obj = ResourceManager.GetObject("hub", resourceCulture);
@@ -113,6 +114,7 @@ namespace RPG.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+
         internal static System.Drawing.Bitmap player {
             get {
                 object obj = ResourceManager.GetObject("player", resourceCulture);

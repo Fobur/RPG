@@ -51,7 +51,7 @@ namespace RPG
                 ? xAbs
                 : yAbs;
         }
-
+      
         public bool InBounds(Point point)
         {
             return point.X > -1 && point.X < Size
