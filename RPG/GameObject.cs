@@ -4,14 +4,71 @@ namespace RPG
 {
     public class GameObject
     {
-        public Image Image = Properties.Resources.grass;
+        public Image Image;
+        public Image Background;
         public int Difficulty;
+
+        public GameObject()
+        {
+            Image = Properties.Resources.grass;
+        }
+
+        public GameObject(TileName name, Zones zone)
+        {
+            switch (name)
+            {
+                case TileName.Hub:
+                    Image = Properties.Resources.hub;
+                    Background = Properties.Resources.grass;
+                    break;
+                case TileName.Mountain:
+                    Image = Properties.Resources.mountain;
+                    Background = Properties.Resources.grass;
+                    break;
+                case TileName.River:
+                    Image = Properties.Resources.empty;
+                    Background = Properties.Resources.river;
+                    break;
+                case TileName.Meadow:
+                    Image = Properties.Resources.empty;
+                    Background = Properties.Resources.grass;
+                    break;
+                default:
+                    Image = Properties.Resources.notexture;
+                    Background = Properties.Resources.empty;
+                    break;
+            }
+            switch (zone)
+            {
+                case Zones.HubZone:
+                    Difficulty = 0;
+                    break;
+                case Zones.GreenZone:
+                    Difficulty = 10;
+                    break;
+                case Zones.FrointerZone:
+                    Difficulty = 15;
+                    break;
+                case Zones.UnknownZone:
+                    Difficulty = 30;
+                    break;
+            }
+        }
     }
 
-    enum TileName
+    public enum TileName
     {
         Mountain,
         River,
+        Meadow,
         Hub
+    }
+
+    public enum Zones
+    {
+        HubZone,
+        GreenZone,
+        FrointerZone,
+        UnknownZone
     }
 }

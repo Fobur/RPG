@@ -27,7 +27,10 @@ namespace RPG
                 for (var j = 0; j <= World.Map.Size; j++)
                 {
                     if (i < World.Map.Size && j < World.Map.Size)
+                    {
+                        g.DrawImage(World.Map.Grid[i, j].Content.Background, new Rectangle(i * tileSize + whiteSpace + 1, j * tileSize + whiteSpace + 1, tileSize - 1, tileSize - 1));
                         g.DrawImage(World.Map.Grid[i, j].Content.Image, new Rectangle(i * tileSize + whiteSpace + 1, j * tileSize + whiteSpace + 1, tileSize - 1, tileSize - 1));
+                    }
                     g.DrawLine(linePen, i * tileSize + whiteSpace, j + whiteSpace, i * tileSize + whiteSpace, j * tileSize + whiteSpace);
                     g.DrawLine(linePen, j + whiteSpace, i * tileSize + whiteSpace, j * tileSize + whiteSpace, i * tileSize + whiteSpace);
                 }
