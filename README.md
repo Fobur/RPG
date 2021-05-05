@@ -1,4 +1,10 @@
-![Состояние игры](https://user-images.githubusercontent.com/81422717/115551342-55b2c100-a2c4-11eb-8d8c-0ea4bd6bb078.png)
+Начало
+![image](https://user-images.githubusercontent.com/81422717/117157323-f2528400-add7-11eb-83b1-4b77c3ee0473.png)
+![image](https://user-images.githubusercontent.com/81422717/117157718-42c9e180-add8-11eb-9d2d-156ec023d6fc.png)
+
+Открыта вся карта
+![Состояние игры](https://user-images.githubusercontent.com/81422717/117157214-d7800f80-add7-11eb-9a43-6be8a5431344.png)
+
 # Описание:
 ## 1. Мир (в разработке)
 1. Плюшевое фэнтези средневековье, но чем дальше в лес, тем страшнее
