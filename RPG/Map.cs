@@ -17,7 +17,12 @@ namespace RPG
             Grid = GenerateMap(size);
         }
 
-        private Tile[] GenerateMap(int size)
+        public Tile this[Point point]
+        {
+            get => Grid[point.X, point.Y];
+        }
+
+        private Tile[,] GenerateMap(int size)
         {
             var ret = new Tile[size];
             for (var i = 0; i < size; i++)

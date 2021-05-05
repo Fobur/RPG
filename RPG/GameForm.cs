@@ -1,36 +1,87 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace RPG
 {
-    public partial class GameForm : Form
-    {
-        public GameForm()
+	public partial class GameForm : Form
+	{
+		Model World;
+		ScaledViewPanel MainGameView;
+
+		public GameForm()
+		{
+			KeyPreview = true;
+			ClientSize = new Size(700, 700);
+			DoubleBuffered = true;
+			World = new Model();
+			MainGameView = new ScaledViewPanel(World) { Dock = DockStyle.Fill };
+			TakeStep.Click += TakeStepClicked;
+            Resize += GameFormResized;
+			Controls.Add(TakeStep);
+			Controls.Add(MainGameView);
+		}
+
+        private void GameFormResized(object sender, System.EventArgs e)
         {
-            DoubleBuffered = true;
-            InitializeComponent();
+			TakeStep.Location = new Point(ClientSize.Width - 100, ClientSize.Height - 50);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            var map = new Map(21);
-            var linePen = new Pen(Color.Black);
-            var tileSize = 30;
-            var whiteSpace = 30;
-            var g = e.Graphics;
-            base.OnPaint(e);
-            g.Clear(Color.CornflowerBlue);
+        private void TakeStepClicked(object sender, System.EventArgs e)
+		{
+			World.Player.RestoreEnergy();
+		}
 
-            for (int i = 0; i <= map.Size; i++)
-            {                  
-                for (var j = 0; j <= map.Size; j++)
-                {
-                    if (i < map.Size && j < map.Size)
-                        g.DrawImage(map.Grid[i].Content.Image, new Rectangle(i * tileSize + whiteSpace + 1, j * tileSize + whiteSpace + 1, tileSize - 1, tileSize - 1));
-                    g.DrawLine(linePen, i * tileSize + whiteSpace, j + whiteSpace, i * tileSize + whiteSpace, j * tileSize + whiteSpace);
-                    g.DrawLine(linePen, j + whiteSpace, i * tileSize + whiteSpace, j * tileSize + whiteSpace, i * tileSize + whiteSpace);
-                }
-            }
-        }
+		private Button TakeStep = new Button
+		{
+			Text = "Take Move",
+			Size = new Size(100, 50),
+			Location = new Point(600, 650)
+		};
+
+
+		KeyEventArgs FirstPressed;
+		HashSet<Keys> KeyPressed = new HashSet<Keys>();
+		HashSet<Keys> ControlKeys = new HashSet<Keys>{Keys.W, Keys.A, Keys.S, Keys.D};
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			base.OnKeyDown(e);
+			if (KeyPressed.Count == 0)
+			{
+				FirstPressed = e;
+			}
+			if (!KeyPressed.Contains(e.KeyCode))
+				KeyPressed.Add(e.KeyCode);
+		}
+
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			base.OnKeyUp(e);
+			KeyPressed.Remove(e.KeyCode);
+			if (KeyPressed.Count == 0 && ControlKeys.Contains(e.KeyCode))
+			{
+				World.Player.TakeStep(TranformKeyToDirection(FirstPressed), World.Map);
+				Refresh();
+			}
+		}
+
+		private MoveDirections TranformKeyToDirection(KeyEventArgs e)
+		{
+			var key = e.KeyCode;
+			switch (key)
+			{
+				case Keys.W:
+					return MoveDirections.Up;
+				case Keys.S:
+					return MoveDirections.Down;
+				case Keys.A:
+					return MoveDirections.Left;
+				case Keys.D:
+					return MoveDirections.Right;
+				default:
+					return MoveDirections.None;
+			}
+		}
     }
 }

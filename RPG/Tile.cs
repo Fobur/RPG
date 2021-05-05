@@ -12,6 +12,7 @@ namespace RPG
         public readonly int YCord;
         public GameObject Content;
         public readonly int Size = 30;
+        public bool IsVisited;
 
         public Tile(int x, int y, GameObject obj)
         {
