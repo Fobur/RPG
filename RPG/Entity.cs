@@ -7,8 +7,8 @@ namespace RPG
     {
         public Point Position;
         public Image skin;
-        public int InitialEnergy;
         public int Energy;
+        public int InitialEnergy;
         public int ViewRadius;
 
         public void RestoreEnergy()
@@ -29,7 +29,7 @@ namespace RPG
         public void TakeStep(MoveDirections direction, Map map)
         {
             var nextPosition = DirectionToPoint(direction, Position);
-            if (map.InBounds(nextPosition) && map[nextPosition].Content.Cost <= Energy)
+            if (map.InBounds(nextPosition) && Energy >= map[nextPosition].Content.Cost)
             {
                 Position = nextPosition;
                 Energy -= map[nextPosition].Content.Cost;

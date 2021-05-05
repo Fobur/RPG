@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,16 +9,14 @@ namespace RPG
 {
     public class Tile
     {
-        public readonly int XCord;
-        public readonly int YCord;
+        public readonly Point Coord;
         public GameObject Content;
         public readonly int Size = 30;
         public bool IsVisited;
 
-        public Tile(int x, int y, GameObject obj)
+        public Tile(Point coord, GameObject obj)
         {
-            XCord = x;
-            YCord = y;
+            Coord = coord;
             Content = obj;
         }
     }

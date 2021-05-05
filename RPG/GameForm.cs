@@ -17,17 +17,17 @@ namespace RPG
 			World = new Model();
 			MainGameView = new ScaledViewPanel(World) { Dock = DockStyle.Fill };
 			TakeStep.Click += TakeStepClicked;
-            Resize += GameFormResized;
+			Resize += GameFormResized;
 			Controls.Add(TakeStep);
 			Controls.Add(MainGameView);
 		}
 
-        private void GameFormResized(object sender, System.EventArgs e)
-        {
+		private void GameFormResized(object sender, System.EventArgs e)
+		{
 			TakeStep.Location = new Point(ClientSize.Width - 100, ClientSize.Height - 50);
-        }
+		}
 
-        private void TakeStepClicked(object sender, System.EventArgs e)
+		private void TakeStepClicked(object sender, System.EventArgs e)
 		{
 			World.Player.RestoreEnergy();
 		}
@@ -42,7 +42,7 @@ namespace RPG
 
 		KeyEventArgs FirstPressed;
 		HashSet<Keys> KeyPressed = new HashSet<Keys>();
-		HashSet<Keys> ControlKeys = new HashSet<Keys>{Keys.W, Keys.A, Keys.S, Keys.D};
+		HashSet<Keys> ControlKeys = new HashSet<Keys> { Keys.W, Keys.A, Keys.S, Keys.D };
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
@@ -83,5 +83,5 @@ namespace RPG
 					return MoveDirections.None;
 			}
 		}
-    }
+	}
 }
