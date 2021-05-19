@@ -1,9 +1,9 @@
 Начало
-![image](https://user-images.githubusercontent.com/81422717/117157323-f2528400-add7-11eb-83b1-4b77c3ee0473.png)
-![image](https://user-images.githubusercontent.com/81422717/117157718-42c9e180-add8-11eb-9d2d-156ec023d6fc.png)
+![image](https://user-images.githubusercontent.com/81422717/118788889-aa3e6180-b8ad-11eb-9aab-4c241c4a9ec0.png)
+![image](https://user-images.githubusercontent.com/81422717/118789567-57b17500-b8ae-11eb-9f14-1c5e75815b00.png)
 
 Открыта вся карта
-![image](https://user-images.githubusercontent.com/81422717/118788889-aa3e6180-b8ad-11eb-9aab-4c241c4a9ec0.png)
+![image](https://user-images.githubusercontent.com/81422717/118789491-44060e80-b8ae-11eb-9bb5-c43b0e0b0da7.png)
 
 # Описание:
 ## 1. Мир (в разработке)
