@@ -9,8 +9,10 @@ namespace RPG
         {
             Position = new Point(map.Size / 2, map.Size / 2);
             skin = Properties.Resources.player;
-            InitialEnergy = 3;
-            Energy = InitialEnergy;
+            MaxEnergy = 3;
+            Energy = MaxEnergy;
+            MaxHP = 10;
+            HP = 10;
             ViewRadius = 3;
         }
     }

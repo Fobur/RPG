@@ -26,6 +26,8 @@ namespace RPG
         #region ScaledView
         public PointF MouseLogicalPos => mouseLogicalPos;
 
+		public bool IsDraged;
+
 		public PointF CenterLogicalPos
 		{
 			get { return centerLogicalPos; }
@@ -85,6 +87,7 @@ namespace RPG
 			mouseLogicalPos = ToLogical(e.Location);
 			if (dragInProgress)
 			{
+				IsDraged = true;
 				var loc = e.Location;
 				var dx = (loc.X - dragStart.X) / ZoomScale;
 				var dy = (loc.Y - dragStart.Y) / ZoomScale;
@@ -96,6 +99,7 @@ namespace RPG
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
 			base.OnMouseWheel(e);
+			IsDraged = true;
 			const float zoomChangeStep = 1.1f;
 			if (e.Delta > 0)
 				ZoomScale *= zoomChangeStep;
@@ -137,9 +141,8 @@ namespace RPG
 				zoomScale = vMargin
 					? ClientSize.Width / sceneSize.Height
 					: ClientSize.Height / sceneSize.Height;
-				if (centerLogicalPos == new PointF(-1, -1))
-					centerLogicalPos = new PointF(350, 350);
-				else
+				centerLogicalPos = new PointF(350, 350);
+				if (IsDraged)
 					centerLogicalPos = new PointF(sceneSize.Width / 2, sceneSize.Height / 2);
 			}
 			var shift = GetShift();

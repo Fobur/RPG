@@ -7,13 +7,33 @@ namespace RPG
     {
         public Point Position;
         public Image skin;
-        public int Energy;
-        public int InitialEnergy;
+        private int energy;
+        private int maxEnergy;
+        private int hP;
+        private int maxHP;
         public int ViewRadius;
+        public StatList Stats;
+
+        public int Energy 
+        {  
+            get => energy;
+            set
+            {
+                energy = value;
+            }
+        }
+        public int MaxEnergy { get => maxEnergy; set => maxEnergy = value; }
+        public int HP { get => hP; set => hP = value; }
+        public int MaxHP { get => maxHP; set => maxHP = value; }
 
         public void RestoreEnergy()
         {
-            Energy = InitialEnergy;
+            Energy = MaxEnergy;
+        }
+
+        public void RestoreHP()
+        {
+            HP = MaxHP;
         }
 
         public bool IsVisible(Point tile)
