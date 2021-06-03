@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace RPG
@@ -9,44 +11,155 @@ namespace RPG
 	{
 		Model World;
 		ScaledViewPanel MainGameView;
+		System.Windows.Forms.Timer GameTimer = new System.Windows.Forms.Timer();
+		bool IsWorldComplete;
 
 		public GameForm()
 		{
+			GameTimer.Interval = 700;
+			GameTimer.Tick += GameTimerTicked;
+			GameTimer.Start();
+
 			KeyPreview = true;
 			ClientSize = new Size(1050, 700);
 			DoubleBuffered = true;
 			World = new Model();
+			World.Map.GetGameForm = () => this;
 			MainGameView = new ScaledViewPanel(World) { Dock = DockStyle.Fill };
-
-			PrivateFontCollection collection = new PrivateFontCollection();
-			collection.AddFontFile(@"E:\Game\RPG\RPG\Resources\Konstanting.ttf");
-			FontFamily fontFamily = new FontFamily("Konstanting", collection);
-			RestoreHP.Font = new Font(fontFamily, 18);
-			TakeStep.Font = new Font(fontFamily, 20);
-			HP.Font = new Font(fontFamily, 20);
-			Energy.Font = new Font(fontFamily, 20);
-
-			TakeStep.Click += TakeStepClicked;
-			EnergyBar.Value = World.Player.Energy;
-			EnergyBar.Maximum = World.Player.MaxEnergy;
-			EnergyBar.Controls.Add(Energy);
-			RestoreHP.Click += RestoreHPClicked;
-			HpBar.Value = World.Player.HP;
-			HpBar.Maximum = World.Player.MaxHP;
-			HpBar.Controls.Add(HP);
-
+			MainGameView.MapSize = World.Map.Size;
 			MapView.Controls.Add(MainGameView);
 
-			Interface.Controls.Add(TakeStep);
+			#region Fonts
+			PrivateFontCollection collection = new PrivateFontCollection();
+			var direcrory = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.Length - 24);
+			collection.AddFontFile(direcrory + @"\Resources\Konstanting.ttf");
+			FontFamily fontFamily = new FontFamily("Konstanting", collection);
+			RestoreHP.Font = new Font(fontFamily, 18);
+			TakeMove.Font = new Font(fontFamily, 20);
+			HP.Font = new Font(fontFamily, 20);
+			Energy.Font = new Font(fontFamily, 20);
+			Exp.Font = new Font(fontFamily, 20);
+			Level.Font = new Font(fontFamily, 20);
+			Agility.Font = new Font(fontFamily, 20);
+			Stamina.Font = new Font(fontFamily, 20);
+			Perception.Font = new Font(fontFamily, 20);
+			Strength.Font = new Font(fontFamily, 20);
+			StatPoints.Font = new Font(fontFamily, 20);
+			RoundAttack.Font = new Font(fontFamily, 19);
+			RangeAttack.Font = new Font(fontFamily, 19);
+			HeavyAttack.Font = new Font(fontFamily, 19);
+			Treasures.Font = new Font(fontFamily, 22);
+			PlayerWon.Font = new Font(fontFamily, 19);
+			PlayerLost.Font = new Font(fontFamily, 19);
+			#endregion
+
+			#region ControlsActivities
+			TakeMove.Click += TakeMoveClicked;
+			EnergyBar.GetMaximum = () => World.Player.MaxEnergy;
+			EnergyBar.GetValue = () => World.Player.Energy;
+			EnergyBar.Controls.Add(Energy);
+			RestoreHP.Click += RestoreHPClicked;
+			HpBar.GetMaximum = () => World.Player.MaxHP;
+			HpBar.GetValue = () => World.Player.HP;
+			HpBar.Controls.Add(HP);
+			ExpBar.GetMaximum = () => World.Player.Level * 10;
+			ExpBar.GetValue = () => World.Player.Experience;
+			ExpBar.Controls.Add(Exp);
+			Level.GetValue = () => World.Player.Level;
+			Agility.GetValue = () => World.Player.Stats.Agility;
+			Strength.GetValue = () => World.Player.Stats.Strength;
+			Stamina.GetValue = () => World.Player.Stats.Stamina;
+			Perception.GetValue = () => World.Player.Stats.Perception;
+			StatPoints.GetValue = () => World.Player.StatPoints;
+			IncreaseAgility.Click += IncreaseStatClicked;
+			IncreasePerception.Click += IncreaseStatClicked;
+			IncreaseStamina.Click += IncreaseStatClicked;
+			IncreaseStrength.Click += IncreaseStatClicked;
+			RoundAttack.Click += AttackClicked;
+			RangeAttack.Click += AttackClicked;
+			HeavyAttack.Click += AttackClicked;
+			#endregion
+
+			#region StatInterface
+			StatInterface.Paint += StatInterface_Paint;
+			StatInterface.Controls.Add(Level);
+			StatInterface.Controls.Add(Agility);
+			StatInterface.Controls.Add(IncreaseAgility);
+			StatInterface.Controls.Add(Strength);
+			StatInterface.Controls.Add(IncreaseStrength);
+			StatInterface.Controls.Add(Stamina);
+			StatInterface.Controls.Add(IncreaseStamina);
+			StatInterface.Controls.Add(Perception);
+			StatInterface.Controls.Add(IncreasePerception);
+			StatInterface.Controls.Add(StatPoints);
+			StatInterface.Controls.Add(Treasures);
+			#endregion
+
+			#region MainInterface
+			Interface.Controls.Add(RangeAttack);
+			Interface.Controls.Add(RoundAttack);
+			Interface.Controls.Add(HeavyAttack);
+			Interface.Controls.Add(StatInterface);
+			Interface.Controls.Add(TakeMove);
 			Interface.Controls.Add(EnergyBar);
 			Interface.Controls.Add(HpBar);
+			Interface.Controls.Add(ExpBar);
 			Interface.Controls.Add(RestoreHP);
+			#endregion
 
 			Controls.Add(Interface);
 			Controls.Add(MapView);
 
 			FormBorderStyle = FormBorderStyle.FixedDialog;
 			MaximizeBox = false;
+			IsWorldComplete = true;
+		}
+
+		private void StatInterface_Paint(object sender, PaintEventArgs e)
+		{
+			var rectangle = new Rectangle(new Point(230, 50), new Size(80, 70));
+			foreach (var treasure in World.Player.Treasures)
+			{
+				e.Graphics.DrawImage(treasure.Skin, rectangle);
+				rectangle.Location = new Point(rectangle.Location.X, rectangle.Location.Y + 80);
+			};
+		}
+
+		private void GameTimerTicked(object sender, EventArgs e)
+		{
+			if(IsWorldComplete)
+            {
+				MapView.Refresh();
+				if (World.Player.StatPoints > 0)
+				{
+					IncreaseAgility.Visible = true;
+					IncreaseStrength.Visible = true;
+					IncreaseStamina.Visible = true;
+					IncreasePerception.Visible = true;
+
+				}
+				if (World.Player.IsDead)
+				{
+					IncreaseAgility.Visible = false;
+					IncreasePerception.Visible = false;
+					IncreaseStamina.Visible = false;
+					IncreaseStrength.Visible = false;
+					RestoreHP.Visible = false;
+					HeavyAttack.Visible = false;
+					RangeAttack.Visible = false;
+					RoundAttack.Visible = false;
+					TakeMove.Visible = false;
+					MakePopup(false);
+				}
+			}
+		}
+
+		#region Interface
+
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			base.OnPaint(e);
+			CheckStatPoints(World);
 		}
 
 		private Label HP = new Label
@@ -57,19 +170,19 @@ namespace RPG
 			BackColor = Color.Transparent,
 			ForeColor = Color.Black
 		};
-
 		private Bar HpBar = new Bar
 		{
-			Location = new Point(25,25),
+			Location = new Point(25, 25),
 			Size = new Size(Interface.Size.Width - 50, 50),
-			Brush = Brushes.ForestGreen
+			Brush = Brushes.ForestGreen,
+			Name = "HPBar"
 		};
 
-		private void RestoreHPClicked(object sender, System.EventArgs e)
-        {
+		private void RestoreHPClicked(object sender, EventArgs e)
+		{
 			World.Player.RestoreHP();
-        }
-
+			Refresh();
+		}
 		private Button RestoreHP = new Button
 		{
 			Text = "Restore HP",
@@ -87,20 +200,51 @@ namespace RPG
 			BackColor = Color.Transparent,
 			ForeColor = Color.Black
 		};
-
 		private Bar EnergyBar = new Bar
 		{
 			Location = new Point(25, 85),
 			Size = new Size(Interface.Size.Width - 50, 50),
-			Brush = Brushes.CornflowerBlue
+			Brush = Brushes.CornflowerBlue,
+			Name = "EnergyBar"
 		};
 
-		private void TakeStepClicked(object sender, System.EventArgs e)
+		private Label Exp = new Label
+		{
+			Text = "Experience",
+			Size = new Size(Interface.Size.Width - 50, 50),
+			TextAlign = ContentAlignment.MiddleCenter,
+			BackColor = Color.Transparent,
+			ForeColor = Color.Black
+		};
+		private Bar ExpBar = new Bar
+		{
+			Location = new Point(25, 145),
+			Size = new Size(Interface.Size.Width - 50, 50),
+			Brush = Brushes.LightGoldenrodYellow,
+			Name = "ExpBar"
+		};
+
+		private void TakeMoveClicked(object sender, EventArgs e)
 		{
 			World.Player.RestoreEnergy();
+			foreach (var monster in World.Monsters)
+				monster.TakeMove();
+			World.CheckMonsters();
+			if (World.Player.IsDead)
+			{
+				IncreaseAgility.Visible = false;
+				IncreasePerception.Visible = false;
+				IncreaseStamina.Visible = false;
+				IncreaseStrength.Visible = false;
+				RestoreHP.Visible = false;
+				HeavyAttack.Visible = false;
+				RangeAttack.Visible = false;
+				RoundAttack.Visible = false;
+				TakeMove.Visible = false;
+			}
+			Refresh();
 		}
-
-		private Button TakeStep = new Button
+		private Button TakeMove = new Button
 		{
 			Text = "Take Move",
 			Size = new Size(100, 50),
@@ -114,10 +258,196 @@ namespace RPG
 			Bounds = new Rectangle(new Point(700, 0), new Size(350, 700)),
 			BackgroundImage = Properties.Resources.wood
 		};
-		
+		private static ContainerControl StatInterface = new ContainerControl
+		{
+			Bounds = new Rectangle(new Point(10, 205), new Size(330, 300)),
+			BackgroundImage = Properties.Resources.stone
+		};
+
+		private Label Treasures = new Label
+		{
+			Text = "Treasures",
+			Size = new Size(150, 50),
+			Location = new Point(230, 10),
+			BackColor = Color.Transparent
+		};
+		private LabelWithValue StatPoints = new LabelWithValue
+		{
+			Stat = Stats.StatPoints,
+			Size = new Size(150, 50),
+			Location = new Point(10, 260),
+			BackColor = Color.Transparent,
+			ForeColor = Color.Black
+		};
+		private LabelWithValue Level = new LabelWithValue
+		{
+			Stat = Stats.Level,
+			Size = new Size(150, 50),
+			Location = new Point(10, 10),
+			BackColor = Color.Transparent,
+			ForeColor = Color.Black
+		};
+		private LabelWithValue Agility = new LabelWithValue
+		{
+			Stat = Stats.Agility,
+			Size = new Size(150, 50),
+			Location = new Point(10, 60),
+			BackColor = Color.Transparent,
+			ForeColor = Color.Black
+		};
+		private LabelWithValue Strength = new LabelWithValue
+		{
+			Stat = Stats.Strength,
+			Size = new Size(150, 50),
+			Location = new Point(10, 110),
+			BackColor = Color.Transparent,
+			ForeColor = Color.Black
+		};
+		private LabelWithValue Stamina = new LabelWithValue
+		{
+			Stat = Stats.Stamina,
+			Size = new Size(150, 50),
+			Location = new Point(10, 160),
+			BackColor = Color.Transparent,
+			ForeColor = Color.Black
+		};
+		private LabelWithValue Perception = new LabelWithValue
+		{
+			Stat = Stats.Perception,
+			Size = new Size(150, 50),
+			Location = new Point(10, 210),
+			BackColor = Color.Transparent,
+			ForeColor = Color.Black
+		};
+
+		private static ButtonWithStat IncreaseAgility = new ButtonWithStat
+		{
+			Size = new Size(31, 31),
+			Location = new Point(160, 60),
+			BackgroundImage = Properties.Resources.plus,
+			FlatStyle = FlatStyle.Popup,
+			Stat = Stats.Agility
+		};
+		private static ButtonWithStat IncreaseStrength = new ButtonWithStat
+		{
+			Size = new Size(31, 31),
+			Location = new Point(160, 110),
+			BackgroundImage = Properties.Resources.plus,
+			FlatStyle = FlatStyle.Popup,
+			Stat = Stats.Strength
+		};
+		private static ButtonWithStat IncreaseStamina = new ButtonWithStat
+		{
+			Size = new Size(31, 31),
+			Location = new Point(160, 160),
+			BackgroundImage = Properties.Resources.plus,
+			FlatStyle = FlatStyle.Popup,
+			Stat = Stats.Stamina
+		};
+		private static ButtonWithStat IncreasePerception = new ButtonWithStat
+		{
+			Size = new Size(31, 31),
+			Location = new Point(160, 210),
+			BackgroundImage = Properties.Resources.plus,
+			FlatStyle = FlatStyle.Popup,
+			Stat = Stats.Perception
+		};
+
+		private static Button RoundAttack = new Button
+		{
+			Text = "Round Attack",
+			Size = new Size(75, 75),
+			Location = new Point(25, Interface.Size.Height - 165),
+			FlatStyle = FlatStyle.Popup,
+			BackgroundImage = Properties.Resources.stone,
+			Name = "Round"
+		};
+		private static Button RangeAttack = new Button
+		{
+			Text = "Range Attack",
+			Size = new Size(75, 75),
+			Location = new Point(135, Interface.Size.Height - 165),
+			FlatStyle = FlatStyle.Popup,
+			BackgroundImage = Properties.Resources.stone,
+			Name = "Range"
+		};
+		private static Button HeavyAttack = new Button
+		{
+			Text = "Heavy Attack",
+			Size = new Size(75, 75),
+			Location = new Point(245, Interface.Size.Height - 165),
+			FlatStyle = FlatStyle.Popup,
+			BackgroundImage = Properties.Resources.stone,
+			Name = "Heavy"
+		};
+
+		private void AttackClicked(object sender, EventArgs e)
+		{
+			var button = (Button)sender;
+			Attack attack = AttackMethods.AttackConstructor(AttackMethods.ConvertFromString(button.Name),
+				World.Player);
+			if (World.Player.Energy >= attack.Cost)
+			{
+				World.Player.Energy -= attack.Cost;
+				MainGameView.AttackZone = attack.Zone;
+				MainGameView.IsAttacked = true;
+				Refresh();
+				World.CheckAttackZone(attack, true, World.Player);
+				MainGameView.IsAttacked = false;
+				Refresh();
+			}
+		}
+
+		private void IncreaseStatClicked(object sender, System.EventArgs e)
+		{
+			var a = (ButtonWithStat)sender;
+			World.Player.IncreaseStat(a.Stat, 1);
+			CheckStatPoints(World);
+			Refresh();
+		}
+
+		public static void CheckStatPoints(Model World)
+		{
+			if (World.Player.StatPoints > 0)
+			{
+				IncreaseAgility.Visible = true;
+				IncreaseStrength.Visible = true;
+				IncreaseStamina.Visible = true;
+				IncreasePerception.Visible = true;
+			}
+			else
+			{
+				IncreaseAgility.Visible = false;
+				IncreaseStrength.Visible = false;
+				IncreaseStamina.Visible = false;
+				IncreasePerception.Visible = false;
+			}
+		}
+		#endregion
+
+		public void MakePopup(bool gameWon)
+        {
+			//if (gameWon)
+			//	new PopupForm(PlayerWon).ShowDialog();
+			//else
+			//	new PopupForm(PlayerLost).ShowDialog();
+		}
+
+		private Label PlayerWon = new Label
+		{
+			Text = "You won",
+			BackColor = Color.Transparent
+		};
+
+		private Label PlayerLost = new Label
+		{
+			Text = "You lost",
+			BackColor = Color.Transparent
+		};
+
 		private ContainerControl MapView = new ContainerControl
 		{
-			Bounds = new Rectangle(new Point(0,0),new Size(700,700))
+			Bounds = new Rectangle(new Point(0, 0), new Size(700, 700))
 		};
 
 		KeyEventArgs FirstPressed;
@@ -127,40 +457,45 @@ namespace RPG
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);
-			if (KeyPressed.Count == 0)
+			if (!World.Player.IsDead)
 			{
-				FirstPressed = e;
+				if (KeyPressed.Count == 0)
+				{
+					FirstPressed = e;
+				}
+				if (!KeyPressed.Contains(e.KeyCode))
+					KeyPressed.Add(e.KeyCode);
 			}
-			if (!KeyPressed.Contains(e.KeyCode))
-				KeyPressed.Add(e.KeyCode);
 		}
-
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
 			base.OnKeyUp(e);
-			KeyPressed.Remove(e.KeyCode);
-			if (KeyPressed.Count == 0 && ControlKeys.Contains(e.KeyCode))
+			if (!World.Player.IsDead)
 			{
-				World.Player.TakeStep(TranformKeyToDirection(FirstPressed), World.Map);
-				Refresh();
+				KeyPressed.Remove(e.KeyCode);
+				if (KeyPressed.Count == 0 && ControlKeys.Contains(e.KeyCode) && World.Map.CanTakeMove(TranformKeyToDirection(FirstPressed), World.Player))
+				{
+					World.Map.TakeMove(TranformKeyToDirection(FirstPressed), World.Player);
+					RestoreHP.Visible = World.Player.Position == World.Map.Hub ? true : false;
+					Refresh();
+				}
 			}
 		}
-
-		private MoveDirections TranformKeyToDirection(KeyEventArgs e)
+		private Directions TranformKeyToDirection(KeyEventArgs e)
 		{
 			var key = e.KeyCode;
 			switch (key)
 			{
 				case Keys.W:
-					return MoveDirections.Up;
+					return Directions.Up;
 				case Keys.S:
-					return MoveDirections.Down;
+					return Directions.Down;
 				case Keys.A:
-					return MoveDirections.Left;
+					return Directions.Left;
 				case Keys.D:
-					return MoveDirections.Right;
+					return Directions.Right;
 				default:
-					return MoveDirections.None;
+					return Directions.None;
 			}
 		}
 	}

@@ -2,35 +2,28 @@
 {
     public class StatList
     {
-        private int strength;
-        private int agility;
-        private int stamina;
+        public int Strength;
+        public int Agility;
+        public int Stamina;
+        public int Perception;
 
-        public int Strength { get => strength; }
-        public int Agility { get => agility; }
-        public int Stamina { get => stamina; }
-
-        public StatList(int str, int ag, int sta)
+        public StatList(int str, int ag, int sta, int per)
         {
-            strength = str;
-            agility = ag;
-            stamina = sta;
+            Strength = str;
+            Agility = ag;
+            Stamina = sta;
+            Perception = per;
         }
 
-        public void IncreaseStat(string stat, int value)
-        {
-            switch (stat)
-            {
-                case "strength":
-                    strength += value;
-                    break;
-                case "agility":
-                    agility += value;
-                    break;
-                case "stamina":
-                    stamina += value;
-                    break;
-            }
-        }
+        public int Average() => (Strength + Agility + Stamina + Perception) / 2;
+    }
+    public enum Stats
+    {
+        Strength,
+        Agility,
+        Stamina,
+        Perception,
+        Level,
+        StatPoints
     }
 }

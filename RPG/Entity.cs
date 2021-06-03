@@ -1,30 +1,43 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace RPG
 {
-    public class Entity
+    public class Entity : GameObject
     {
-        public Point Position;
-        public Image skin;
         private int energy;
         private int maxEnergy;
         private int hP;
         private int maxHP;
+
         public int ViewRadius;
         public StatList Stats;
-
-        public int Energy 
-        {  
+        public int Energy
+        {
             get => energy;
+            set => energy = value;
+        }
+        public int MaxEnergy
+        {
+            get => maxEnergy;
+            set => maxEnergy = value;
+        }
+        public int HP
+        {
+            get => hP;
             set
             {
-                energy = value;
+                hP = value;
+                if (hP <= 0)
+                    Dead();
             }
         }
-        public int MaxEnergy { get => maxEnergy; set => maxEnergy = value; }
-        public int HP { get => hP; set => hP = value; }
-        public int MaxHP { get => maxHP; set => maxHP = value; }
+        public int MaxHP
+        {
+            get => maxHP;
+            set => maxHP = value;
+        }
+        public bool IsDead;
+        public bool IsPlayer;
 
         public void RestoreEnergy()
         {
@@ -36,50 +49,18 @@ namespace RPG
             HP = MaxHP;
         }
 
-        public bool IsVisible(Point tile)
+        public bool IsTileVisible(Point tile)
         {
-            return GetDistanceToTile(tile) <= ViewRadius;
+            return Map.GetDistanceToTile(tile, Position) <= ViewRadius;
         }
 
-        public int GetDistanceToTile(Point tile)
-        {
-            return Math.Abs(tile.X - Position.X) + Math.Abs(tile.Y - Position.Y);
-        }
+        public bool IsVisible(Entity opponent) => opponent.Stats.Perception >= Stats.Agility / 3
+                ? true
+                : false;
 
-        public void TakeStep(MoveDirections direction, Map map)
+        virtual public void Dead()
         {
-            var nextPosition = DirectionToPoint(direction, Position);
-            if (map.InBounds(nextPosition) && Energy >= map[nextPosition].Content.Cost)
-            {
-                Position = nextPosition;
-                Energy -= map[nextPosition].Content.Cost;
-            }
+            IsDead = true;
         }
-
-        public Point DirectionToPoint(MoveDirections direction, Point position)
-        {
-            switch(direction)
-            {
-                case MoveDirections.Up:
-                    return new Point(position.X, position.Y - 1);
-                case MoveDirections.Down:
-                    return new Point(position.X, position.Y + 1);
-                case MoveDirections.Left:
-                    return new Point(position.X - 1, position.Y);
-                case MoveDirections.Right:
-                    return new Point(position.X + 1, position.Y);
-                default:
-                    return position;
-            }
-        }
-    }
-
-    public enum MoveDirections
-    {
-        Up,
-        Down,
-        Right,
-        Left,
-        None
     }
 }
