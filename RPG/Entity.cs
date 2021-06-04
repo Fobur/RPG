@@ -54,7 +54,7 @@ namespace RPG
             return Map.GetDistanceToTile(tile, Position) <= ViewRadius;
         }
 
-        public bool IsVisible(Entity opponent) => opponent.Stats.Perception >= Stats.Agility / 3
+        public bool IsVisible(Entity opponent) => opponent.Stats.Perception >= Stats.Agility
                 ? true
                 : false;
 

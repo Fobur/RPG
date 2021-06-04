@@ -78,6 +78,7 @@ namespace RPG
                     case RPG.Stats.Stamina:
                         Stats.Stamina += value;
                         MaxEnergy = Stats.Agility * Stats.Stamina / 2;
+                        MaxHP = 10 + Stats.Stamina * 2;
                         break;
                     case RPG.Stats.Perception:
                         Stats.Perception += value;
