@@ -34,9 +34,9 @@ namespace RPG
             for (var i = 0; i < 4; i++)
             {
                 CreateAllMonsterTypes(1, monsters);
-                CreateAllMonsterTypes(2, monsters);
-                CreateAllMonsterTypes(3, monsters);
             }
+            CreateAllMonsterTypes(2, monsters);
+            CreateAllMonsterTypes(3, monsters);
             return monsters.OrderByDescending(x => x.Stats.Agility).ToList();
         }
 

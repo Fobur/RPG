@@ -81,7 +81,7 @@ namespace RPG
                         break;
                     case RPG.Stats.Perception:
                         Stats.Perception += value;
-                        ViewRadius = 3 + Stats.Perception / 3;
+                        ViewRadius = ViewRadius <= 5 ? 3 + (Stats.Perception - 3) / 3 : 5;
                         break;
                 }
                 StatPoints--;

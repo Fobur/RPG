@@ -166,17 +166,20 @@ namespace RPG
                         var rectangle = new RectangleF(i * tileSize + whiteSpace,
                             j * tileSize + whiteSpace, tileSize, tileSize);
                         if (World.Map[tile] != null)
+                        {
                             g.DrawImage(World.Map[tile].Content.Background, rectangle);
-                        if (World.Map[tile] != null)
                             if (World.Map[tile].Content.Image != Properties.Resources.empty)
                                 g.DrawImage(World.Map[tile].Content.Image, rectangle);
-                        if (World.Map[tile] != null)
                             if (!World.Player.IsTileVisible(tile))
                             {
                                 if (!World.Map[tile].IsVisited)
                                     g.FillRectangle(brushForNotVisited, rectangle);
                                 else
+                                {
+                                    if (World.Map[tile].Content.Treasure != null)
+                                        g.DrawImage(World.Map[tile].Content.Treasure.Skin, rectangle);
                                     g.FillRectangle(brushForVisited, rectangle);
+                                }
                             }
                             else
                             {
@@ -199,6 +202,7 @@ namespace RPG
                                         j * tileSize + whiteSpace + tileSize - tileSize / 10, (float)entity.HP * tileSize / entity.MaxHP, tileSize / 20);
                                     }
                             }
+                        }
                     }
                 }
             }

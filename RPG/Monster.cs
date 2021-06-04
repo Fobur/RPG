@@ -137,7 +137,7 @@ namespace RPG
                         {
                             randomPath.Add(nextPoint);
                             costOfPath += map[nextPoint].Content.Cost;
-                            while (map[nextPoint].Content.Difficulty != DangerousLevel)
+                            while (map[nextPoint].Content.Difficulty != DangerousLevel && map.InBounds(nextPoint))
                                 nextPoint = Position + DijkstraPathFinder.PossibleDirections[random.Next(0, 3)];
                         }
                         map.TakeMove(randomPath, this);
@@ -147,7 +147,8 @@ namespace RPG
                             visibleEntities.Select(x => x.Position).ToList(), Position)
                             .OrderBy(x => x.Cost)
                             .FirstOrDefault();
-                            isKilledSomeone = AttackVisibleEntity(path, GetVisibleEntities(this));
+                            if(path != null)
+                                isKilledSomeone = AttackVisibleEntity(path, GetVisibleEntities(this));
                         }
                     }
                     else

@@ -12,14 +12,9 @@ namespace RPG
 		Model World;
 		ScaledViewPanel MainGameView;
 		System.Windows.Forms.Timer GameTimer = new System.Windows.Forms.Timer();
-		bool IsWorldComplete;
 
 		public GameForm()
 		{
-			GameTimer.Interval = 700;
-			GameTimer.Tick += GameTimerTicked;
-			GameTimer.Start();
-
 			KeyPreview = true;
 			ClientSize = new Size(1050, 700);
 			DoubleBuffered = true;
@@ -112,7 +107,10 @@ namespace RPG
 
 			FormBorderStyle = FormBorderStyle.FixedDialog;
 			MaximizeBox = false;
-			IsWorldComplete = true;
+
+			GameTimer.Interval = 700;
+			GameTimer.Tick += GameTimerTicked;
+			GameTimer.Start();
 		}
 
 		private void StatInterface_Paint(object sender, PaintEventArgs e)
@@ -127,16 +125,14 @@ namespace RPG
 
 		private void GameTimerTicked(object sender, EventArgs e)
 		{
-			if(IsWorldComplete)
-            {
-				MapView.Refresh();
+				
 				if (World.Player.StatPoints > 0)
 				{
 					IncreaseAgility.Visible = true;
 					IncreaseStrength.Visible = true;
 					IncreaseStamina.Visible = true;
 					IncreasePerception.Visible = true;
-
+					Interface.Refresh();
 				}
 				if (World.Player.IsDead)
 				{
@@ -149,9 +145,8 @@ namespace RPG
 					RangeAttack.Visible = false;
 					RoundAttack.Visible = false;
 					TakeMove.Visible = false;
-					MakePopup(false);
+					Refresh();
 				}
-			}
 		}
 
 		#region Interface
@@ -425,13 +420,6 @@ namespace RPG
 		}
 		#endregion
 
-		public void MakePopup(bool gameWon)
-        {
-			//if (gameWon)
-			//	new PopupForm(PlayerWon).ShowDialog();
-			//else
-			//	new PopupForm(PlayerLost).ShowDialog();
-		}
 
 		private Label PlayerWon = new Label
 		{
