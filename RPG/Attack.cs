@@ -56,16 +56,16 @@ namespace RPG
             switch (type)
             {
                 case MonsterTypes.Dragon:
-                    multiplier = 5;
+                    multiplier = 2;
                     break;
                 case MonsterTypes.Hydra:
-                    multiplier = 5;
+                    multiplier = 2;
                     break;
                 case MonsterTypes.Wyvern:
-                    multiplier = 4;
+                    multiplier = 2;
                     break;
                 case MonsterTypes.Troll:
-                    multiplier = 3;
+                    multiplier = 2;
                     break;
                 case MonsterTypes.Orc:
                     multiplier = 2;
