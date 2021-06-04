@@ -127,6 +127,8 @@ namespace RPG
                     {
                         var random = new Random();
                         var nextPoint = Position + DijkstraPathFinder.PossibleDirections[random.Next(0, 3)];
+                        while(!map.InBounds(nextPoint))
+                            nextPoint = Position + DijkstraPathFinder.PossibleDirections[random.Next(0, 3)];
                         var randomPath = new List<Point>();
                         var costOfPath = 0;
                         while(map[nextPoint].Content.Difficulty != DangerousLevel)
