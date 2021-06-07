@@ -159,9 +159,9 @@ namespace RPG
 
         public void TakeMove(Directions direction, Entity entity)
         {
+            var nextPosition = DirectionToPoint(direction, entity.Position);
             if (CanTakeMove(direction, entity))
             {
-                var nextPosition = DirectionToPoint(direction, entity.Position);
                 this[entity.Position].Content.Entity = null;
                 this[nextPosition].Content.Entity = entity;
                 entity.Position = nextPosition;
@@ -170,7 +170,10 @@ namespace RPG
                 {
                     ((Player)entity).Treasures.Add(this[entity.Position].Content.Treasure);
                     this[entity.Position].Content.Treasure = null;
+                    GameForm.AddIntoLog(this[entity.Position].Content.Treasure.Name + " was found", Color.DarkBlue);
                     ((Player)entity).LevelUp(2);
+                    if (((Player)entity).Treasures.Count == 3)
+                        GameForm.AddIntoLog("Congtratulations! Game won", Color.DarkBlue);
                 }
             }
         }

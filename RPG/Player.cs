@@ -15,6 +15,7 @@ namespace RPG
             {
                 if (level < 20)
                 {
+                    GameForm.AddIntoLog("LevelUp", Color.Green);
                     level = value;
                     StatPoints += level % 5 == 0 ? 7 : 5;
                     RestoreHP();
@@ -60,6 +61,9 @@ namespace RPG
         {
             for (var i = 0; i < value; i++)
                 Level++;
+
+            GameForm.AddIntoLog("HP Restored", Color.Green);
+            GameForm.AddIntoLog("Energy Restored", Color.Green);
         }
 
         public void IncreaseStat(Stats stat, int value)

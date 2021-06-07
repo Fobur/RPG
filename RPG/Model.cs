@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace RPG
@@ -71,13 +72,27 @@ namespace RPG
                         ? underAttack.HP - attack.Damage
                         : 0;
                     if (!underAttack.IsPlayer)
+                    {
                         ((Monster)underAttack).MakeHungry();
+                        if (playerAttacked)
+                            GameForm.AddIntoLog("Player deal " + attack.Damage.ToString() + "DMG to " +((Monster)underAttack).Type.ToString(), Color.Green);
+                    }
+                    else
+                        GameForm.AddIntoLog("Player get " + attack.Damage.ToString() + "DMG from " + ((Monster)underAttack).Type.ToString(), Color.Red);
                     if (underAttack.IsDead)
                     {
                         if (playerAttacked)
+                        {
                             Player.Experience += ((Monster)underAttack).ExpGain;
+                            GameForm.AddIntoLog("Player killed " + ((Monster)underAttack).Type.ToString(), Color.Green);
+                            GameForm.AddIntoLog("Player gain " + ((Monster)underAttack).ExpGain.ToString()+"EXP", Color.Green);
+                        }
+                        else
+                            GameForm.AddIntoLog("Something killed " + ((Monster)underAttack).Type.ToString(), Color.Red);
                         if (!underAttack.IsPlayer)
                             AliveMonsters.Remove((Monster)underAttack);
+                        else
+                            GameForm.AddIntoLog("Player was killed by  " + ((Monster)underAttack).Type.ToString(), Color.Red);
                         Map[underAttack.Position].Content.Entity = null;
                     }
                 }

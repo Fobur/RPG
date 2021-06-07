@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace RPG
@@ -12,6 +11,7 @@ namespace RPG
 		Model World;
 		ScaledViewPanel MainGameView;
 		System.Windows.Forms.Timer GameTimer = new System.Windows.Forms.Timer();
+		private static int currentStep;
 
 		public GameForm()
 		{
@@ -19,6 +19,9 @@ namespace RPG
 			ClientSize = new Size(1050, 700);
 			DoubleBuffered = true;
 			World = new Model();
+			Controls.Add(Log);
+			Log.Columns.Add("Step", 35);
+			Log.Columns.Add("Message", 465);
 			World.Map.GetGameForm = () => this;
 			MainGameView = new ScaledViewPanel(World) { Dock = DockStyle.Fill };
 			MainGameView.MapSize = World.Map.Size;
@@ -44,9 +47,10 @@ namespace RPG
 			RangeAttack.Font = new Font(fontFamily, 19);
 			HeavyAttack.Font = new Font(fontFamily, 19);
 			Treasures.Font = new Font(fontFamily, 22);
-			PlayerWon.Font = new Font(fontFamily, 19);
-			PlayerLost.Font = new Font(fontFamily, 19);
+			LogButton.Font = new Font(fontFamily, 19);
 			#endregion
+
+			AddIntoLog("Game started", Color.Black);
 
 			#region ControlsActivities
 			TakeMove.Click += TakeMoveClicked;
@@ -73,6 +77,7 @@ namespace RPG
 			RoundAttack.Click += AttackClicked;
 			RangeAttack.Click += AttackClicked;
 			HeavyAttack.Click += AttackClicked;
+			LogButton.Click += LogClicked;
 			#endregion
 
 			#region StatInterface
@@ -100,6 +105,7 @@ namespace RPG
 			Interface.Controls.Add(HpBar);
 			Interface.Controls.Add(ExpBar);
 			Interface.Controls.Add(RestoreHP);
+			Interface.Controls.Add(LogButton);
 			#endregion
 
 			Controls.Add(Interface);
@@ -125,28 +131,14 @@ namespace RPG
 
 		private void GameTimerTicked(object sender, EventArgs e)
 		{
-				
-				if (World.Player.StatPoints > 0)
-				{
-					IncreaseAgility.Visible = true;
-					IncreaseStrength.Visible = true;
-					IncreaseStamina.Visible = true;
-					IncreasePerception.Visible = true;
-					Interface.Refresh();
-				}
-				if (World.Player.IsDead)
-				{
-					IncreaseAgility.Visible = false;
-					IncreasePerception.Visible = false;
-					IncreaseStamina.Visible = false;
-					IncreaseStrength.Visible = false;
-					RestoreHP.Visible = false;
-					HeavyAttack.Visible = false;
-					RangeAttack.Visible = false;
-					RoundAttack.Visible = false;
-					TakeMove.Visible = false;
-					Refresh();
-				}
+			if (World.Player.StatPoints > 0)
+			{
+				IncreaseAgility.Visible = true;
+				IncreaseStrength.Visible = true;
+				IncreaseStamina.Visible = true;
+				IncreasePerception.Visible = true;
+				Interface.Refresh();
+			}
 		}
 
 		#region Interface
@@ -176,6 +168,7 @@ namespace RPG
 		private void RestoreHPClicked(object sender, EventArgs e)
 		{
 			World.Player.RestoreHP();
+			AddIntoLog("HP Restored", Color.Green);
 			Refresh();
 		}
 		private Button RestoreHP = new Button
@@ -237,6 +230,8 @@ namespace RPG
 				RoundAttack.Visible = false;
 				TakeMove.Visible = false;
 			}
+			currentStep++;
+			AddIntoLog("Energy Restored", Color.Green);
 			Refresh();
 		}
 		private Button TakeMove = new Button
@@ -244,6 +239,19 @@ namespace RPG
 			Text = "Take Move",
 			Size = new Size(100, 50),
 			Location = new Point(25, Interface.Size.Height - 55),
+			BackgroundImage = Properties.Resources.stone,
+			FlatStyle = FlatStyle.Popup
+		};
+
+		private void LogClicked(object sender, EventArgs e)
+		{
+			Log.Visible = !Log.Visible;
+		}
+		private Button LogButton = new Button
+		{
+			Text = "Log",
+			Size = new Size(70, 50),
+			Location = new Point(140, Interface.Size.Height - 55),
 			BackgroundImage = Properties.Resources.stone,
 			FlatStyle = FlatStyle.Popup
 		};
@@ -420,18 +428,23 @@ namespace RPG
 		}
 		#endregion
 
-
-		private Label PlayerWon = new Label
+		private static ListView Log = new ListView
 		{
-			Text = "You won",
-			BackColor = Color.Transparent
+			BackColor = Color.BurlyWood,
+			Size = new Size(500, 100),
+			Location = new Point(0, 600),
+			BorderStyle = BorderStyle.FixedSingle,
+			Scrollable = true,
+			View = View.Details,
+			FullRowSelect = true,
+			Alignment = ListViewAlignment.SnapToGrid,
+			Visible = false
 		};
-
-		private Label PlayerLost = new Label
+		public static void AddIntoLog(string msg, Color color)
 		{
-			Text = "You lost",
-			BackColor = Color.Transparent
-		};
+			var log = new string[] { currentStep.ToString(), msg };
+			Log.Items.Add(new ListViewItem(log, 0, color, Log.BackColor, new Font("Arial", 9)));
+		}
 
 		private ContainerControl MapView = new ContainerControl
 		{
@@ -467,6 +480,8 @@ namespace RPG
 					RestoreHP.Visible = World.Player.Position == World.Map.Hub ? true : false;
 					Refresh();
 				}
+				else if (World.Map[World.Map.DirectionToPoint(TranformKeyToDirection(FirstPressed), World.Player.Position)].Content.Cost > World.Player.Energy)
+					AddIntoLog("Not enough energy to move in this cell", Color.Red);
 			}
 		}
 		private Directions TranformKeyToDirection(KeyEventArgs e)
