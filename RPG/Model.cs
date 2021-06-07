@@ -78,7 +78,7 @@ namespace RPG
                             GameForm.AddIntoLog("Player deal " + attack.Damage.ToString() + "DMG to " +((Monster)underAttack).Type.ToString(), Color.Green);
                     }
                     else
-                        GameForm.AddIntoLog("Player get " + attack.Damage.ToString() + "DMG from " + ((Monster)attacker).Type.ToString(), Color.Red);
+                        GameForm.AddIntoLog("Player get " + attack.Damage.ToString() + "DMG from " + ((Monster)attacker).Type.ToString(), Color.OrangeRed);
                     if (underAttack.IsDead)
                     {
                         if (playerAttacked)
@@ -88,7 +88,7 @@ namespace RPG
                             GameForm.AddIntoLog("Player gain " + ((Monster)underAttack).ExpGain.ToString()+"EXP", Color.Green);
                         }
                         else
-                            GameForm.AddIntoLog("Something killed " + ((Monster)underAttack).Type.ToString(), Color.Red);
+                            GameForm.AddIntoLog("Something killed " + ((Monster)underAttack).Type.ToString(), Color.OrangeRed);
                         if (!underAttack.IsPlayer)
                             AliveMonsters.Remove((Monster)underAttack);
                         else

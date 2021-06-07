@@ -169,8 +169,8 @@ namespace RPG
                 if (entity.IsPlayer && this[entity.Position].Content.Treasure != null)
                 {
                     ((Player)entity).Treasures.Add(this[entity.Position].Content.Treasure);
-                    this[entity.Position].Content.Treasure = null;
                     GameForm.AddIntoLog(this[entity.Position].Content.Treasure.Name + " was found", Color.DarkBlue);
+                    this[entity.Position].Content.Treasure = null;
                     ((Player)entity).LevelUp(2);
                     if (((Player)entity).Treasures.Count == 3)
                         GameForm.AddIntoLog("Congtratulations! Game won", Color.DarkBlue);

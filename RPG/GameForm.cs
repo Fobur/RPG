@@ -21,7 +21,7 @@ namespace RPG
 			World = new Model();
 			Controls.Add(Log);
 			Log.Columns.Add("Step", 35);
-			Log.Columns.Add("Message", 665);
+			Log.Columns.Add("Message", 645);
 			World.Map.GetGameForm = () => this;
 			MainGameView = new ScaledViewPanel(World) { Dock = DockStyle.Fill };
 			MainGameView.MapSize = World.Map.Size;
@@ -399,6 +399,7 @@ namespace RPG
 				MainGameView.IsAttacked = false;
 				Refresh();
 			}
+			AddIntoLog("Not enough energy for attack", Color.Orange);
 		}
 
 		private void IncreaseStatClicked(object sender, System.EventArgs e)
@@ -432,18 +433,20 @@ namespace RPG
 		{
 			BackColor = Color.BurlyWood,
 			Size = new Size(700, 150),
-			Location = new Point(0, 600),
+			Location = new Point(0, 550),
 			BorderStyle = BorderStyle.FixedSingle,
 			Scrollable = true,
 			View = View.Details,
 			FullRowSelect = true,
 			Alignment = ListViewAlignment.SnapToGrid,
-			Visible = false
+			Visible = false,
+			AutoScrollOffset = new Point(690, 700)
 		};
 		public static void AddIntoLog(string msg, Color color)
 		{
 			var log = new string[] { currentStep.ToString(), msg };
 			Log.Items.Add(new ListViewItem(log, 0, color, Log.BackColor, new Font("Arial", 9)));
+			Log.Items[Log.Items.Count - 1].EnsureVisible();
 		}
 
 		private ContainerControl MapView = new ContainerControl
@@ -481,7 +484,7 @@ namespace RPG
 					Refresh();
 				}
 				else if (World.Map[World.Map.DirectionToPoint(TranformKeyToDirection(FirstPressed), World.Player.Position)].Content.Cost > World.Player.Energy)
-					AddIntoLog("Not enough energy to move in this cell", Color.Red);
+					AddIntoLog("Not enough energy to move in this cell", Color.OrangeRed);
 			}
 		}
 		private Directions TranformKeyToDirection(KeyEventArgs e)
