@@ -10,7 +10,7 @@ namespace RPG
 	{
 		Model World;
 		ScaledViewPanel MainGameView;
-		System.Windows.Forms.Timer GameTimer = new System.Windows.Forms.Timer();
+		Timer GameTimer = new Timer();
 		private static int currentStep;
 
 		public GameForm()
@@ -21,7 +21,7 @@ namespace RPG
 			World = new Model();
 			Controls.Add(Log);
 			Log.Columns.Add("Step", 35);
-			Log.Columns.Add("Message", 465);
+			Log.Columns.Add("Message", 665);
 			World.Map.GetGameForm = () => this;
 			MainGameView = new ScaledViewPanel(World) { Dock = DockStyle.Fill };
 			MainGameView.MapSize = World.Map.Size;
@@ -431,7 +431,7 @@ namespace RPG
 		private static ListView Log = new ListView
 		{
 			BackColor = Color.BurlyWood,
-			Size = new Size(500, 100),
+			Size = new Size(700, 150),
 			Location = new Point(0, 600),
 			BorderStyle = BorderStyle.FixedSingle,
 			Scrollable = true,
