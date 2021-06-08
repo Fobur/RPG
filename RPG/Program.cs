@@ -14,13 +14,14 @@ namespace RPG
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            PrivateFontCollection collection = new PrivateFontCollection();
-            var temp = Environment.CurrentDirectory.Split('\\')
-                .TakeWhile(x => x != "RPG")
-                .ToArray();
-            var directory = string.Join('\\', temp);
-            collection.AddFontFile(directory + @"\RPG\RPG\Resources\Konstanting.ttf");
-            FontFamily fontFamily = new FontFamily("Konstanting", collection);
+            var collection = new PrivateFontCollection();
+            var temp = Environment.CurrentDirectory.Split('\\').ToList();
+            temp.Reverse();
+            var path = temp.SkipWhile(x => x != "RPG").ToList();
+            path.Reverse();
+            var directory = string.Join('\\', path);
+            collection.AddFontFile(directory + @"\Resources\Konstanting.ttf");
+            var fontFamily = new FontFamily("Konstanting", collection);
             Application.Run(new GameForm(fontFamily));
         }
     }
