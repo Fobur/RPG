@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace RPG
@@ -29,8 +30,11 @@ namespace RPG
 
 			#region Fonts
 			PrivateFontCollection collection = new PrivateFontCollection();
-			var direcrory = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.Length - 24);
-			collection.AddFontFile(direcrory + @"\Resources\Konstanting.ttf");
+			var temp = Environment.CurrentDirectory.Split('\\')
+				.TakeWhile(x => x != "RPG")
+				.ToArray();
+			var directory = string.Join('\\', temp);
+			collection.AddFontFile(directory + @"\RPG\RPG\Resources\Konstanting.ttf");
 			FontFamily fontFamily = new FontFamily("Konstanting", collection);
 			RestoreHP.Font = new Font(fontFamily, 18);
 			TakeMove.Font = new Font(fontFamily, 20);
