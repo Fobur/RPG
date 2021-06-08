@@ -14,7 +14,7 @@ namespace RPG
 		Timer GameTimer = new Timer();
 		private static int currentStep;
 
-		public GameForm()
+		public GameForm(FontFamily fontFamily)
 		{
 			KeyPreview = true;
 			ClientSize = new Size(1050, 700);
@@ -29,13 +29,7 @@ namespace RPG
 			MapView.Controls.Add(MainGameView);
 
 			#region Fonts
-			PrivateFontCollection collection = new PrivateFontCollection();
-			var temp = Environment.CurrentDirectory.Split('\\')
-				.TakeWhile(x => x != "RPG")
-				.ToArray();
-			var directory = string.Join('\\', temp);
-			collection.AddFontFile(directory + @"\RPG\RPG\Resources\Konstanting.ttf");
-			FontFamily fontFamily = new FontFamily("Konstanting", collection);
+			
 			RestoreHP.Font = new Font(fontFamily, 18);
 			TakeMove.Font = new Font(fontFamily, 20);
 			HP.Font = new Font(fontFamily, 20);
@@ -435,7 +429,7 @@ namespace RPG
 
 		private static ListView Log = new ListView
 		{
-			BackColor = Color.BurlyWood,
+			BackColor = Color.LightSlateGray,
 			Size = new Size(700, 150),
 			Location = new Point(0, 550),
 			BorderStyle = BorderStyle.FixedSingle,
@@ -487,7 +481,7 @@ namespace RPG
 					RestoreHP.Visible = World.Player.Position == World.Map.Hub ? true : false;
 					Refresh();
 				}
-				else if (World.Map[World.Map.DirectionToPoint(TranformKeyToDirection(FirstPressed), World.Player.Position)].Content.Cost > World.Player.Energy)
+				else if (KeyPressed.Count == 0 && ControlKeys.Contains(e.KeyCode) &&World.Map[World.Map.DirectionToPoint(TranformKeyToDirection(FirstPressed), World.Player.Position)].Content.Cost > World.Player.Energy)
 					AddIntoLog("Not enough energy to move in this cell", Color.OrangeRed);
 			}
 		}

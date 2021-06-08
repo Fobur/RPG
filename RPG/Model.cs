@@ -35,8 +35,8 @@ namespace RPG
             for (var i = 0; i < 4; i++)
             {
                 CreateAllMonsterTypes(1, monsters);
+                CreateAllMonsterTypes(2, monsters);
             }
-            CreateAllMonsterTypes(2, monsters);
             CreateAllMonsterTypes(3, monsters);
             return monsters.OrderByDescending(x => x.Stats.Agility).ToList();
         }
@@ -87,10 +87,12 @@ namespace RPG
                             GameForm.AddIntoLog("Player killed " + ((Monster)underAttack).Type.ToString(), Color.Green);
                             GameForm.AddIntoLog("Player gain " + ((Monster)underAttack).ExpGain.ToString()+"EXP", Color.Green);
                         }
-                        else
-                            GameForm.AddIntoLog("Something killed " + ((Monster)underAttack).Type.ToString(), Color.OrangeRed);
+                            
                         if (!underAttack.IsPlayer)
+                        {
                             AliveMonsters.Remove((Monster)underAttack);
+                            GameForm.AddIntoLog("Something killed " + ((Monster)underAttack).Type.ToString(), Color.OrangeRed);
+                        }
                         else
                             GameForm.AddIntoLog("Player was killed by  " + ((Monster)attacker).Type.ToString(), Color.Red);
                         Map[underAttack.Position].Content.Entity = null;
